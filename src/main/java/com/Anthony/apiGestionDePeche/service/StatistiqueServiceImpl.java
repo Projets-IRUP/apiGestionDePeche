@@ -1,5 +1,7 @@
 package com.Anthony.apiGestionDePeche.service;
 
+
+import com.Anthony.apiGestionDePeche.dto.LeurreStatistiqueDTO;
 import com.Anthony.apiGestionDePeche.repository.PriseRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
