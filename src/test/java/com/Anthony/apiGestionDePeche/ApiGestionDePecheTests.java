@@ -39,30 +39,35 @@ public class ApiGestionDePecheTests {
     @Autowired
     private PriseRepository priseRepository;
 
+    @Autowired
+    private PoissonRepository poissonRepository;
+
     private Utilisateur utilisateur;
     private Leurre leurre;
     private Sortie sortie;
+    private Poisson poisson;
 
     @BeforeEach
     void setUp() {
-        // Initialisation des données de test
-    
+        // Réinitialisation des données avant chaque test
         utilisateurRepository.deleteAll();
         sortieRepository.deleteAll();
         leurreRepository.deleteAll();
         priseRepository.deleteAll();
-    
+        poissonRepository.deleteAll();
+
+        // Création des objets pour les tests
         utilisateur = new Utilisateur();
         utilisateur.setNom("Dupont");
         utilisateur.setPrenom("Jean");
         utilisateur.setIdentifiant("jdupont");
         utilisateur.setMotDePasse("password");
         utilisateur = utilisateurRepository.save(utilisateur);
-    
+
         leurre = new Leurre();
         leurre.setNom("Leurre1");
         leurre = leurreRepository.save(leurre);
-    
+
         sortie = new Sortie();
         sortie.setDateHeure(LocalDateTime.of(2024, 5, 20, 14, 30));
         sortie.setSpot("Rivière");
@@ -71,15 +76,15 @@ public class ApiGestionDePecheTests {
         sortie.setCommentaire("Bonne journée");
         sortie.setUtilisateur(utilisateur);
         sortie = sortieRepository.save(sortie);
-    
-        Poisson poisson = new Poisson();
+
+        poisson = new Poisson();
         poisson.setNom("Truite");
         poisson = poissonRepository.save(poisson);
     }
-    
+
     @Test
     public void testCreationUtilisateur() throws Exception {
-        // Test de création d'utilisateur
+        // Test de création d'un utilisateur
         mockMvc.perform(post("/utilisateur/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"nom\": \"Doe\", \"prenom\": \"John\", \"identifiant\": \"jdoe\", \"motDePasse\": \"secret\"}"))
@@ -91,7 +96,7 @@ public class ApiGestionDePecheTests {
 
     @Test
     public void testModificationUtilisateur() throws Exception {
-        // Test de modification d'utilisateur
+        // Test de modification d'un utilisateur
         mockMvc.perform(put("/utilisateur/update/" + utilisateur.getIdUtilisateur())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"nom\": \"Durand\", \"prenom\": \"Jacques\", \"identifiant\": \"jdupont\", \"motDePasse\": \"newpassword\"}"))
@@ -103,7 +108,7 @@ public class ApiGestionDePecheTests {
 
     @Test
     public void testCreationSortie() throws Exception {
-        // Test de création de sortie
+        // Test de création d'une sortie
         mockMvc.perform(post("/sortie/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"dateHeure\": \"2024-05-21T10:00:00\", \"spot\": \"Lac\", \"meteo\": \"Nuageux\", \"maree\": false, \"commentaire\": \"Belle sortie\", \"utilisateur\": {\"idUtilisateur\": " + utilisateur.getIdUtilisateur() + "}}"))
@@ -113,20 +118,17 @@ public class ApiGestionDePecheTests {
 
     @Test
     public void testCreationPrise() throws Exception {
-        Poisson poisson = poissonRepository.findAll().get(0); // Assume the first poisson
-    
+        // Test de création d'une prise
         mockMvc.perform(post("/prise/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"taille\": 15, \"poids\": 2.8, \"remarque\": \"Très bon leurre\", \"leurre\": {\"idLeurre\": " + leurre.getIdLeurre() + "}, \"sortie\": {\"idSortie\": " + sortie.getIdSortie() + "}, \"poisson\": {\"idPoisson\": " + poisson.getIdPoisson() + "}}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.poids", is(2.8)));
     }
-    
+
     @Test
     public void testLeurreStatistics() throws Exception {
-        // Créer une prise pour que le leurre ait des statistiques
-        Poisson poisson = poissonRepository.findAll().get(0);
-        
+        // Création d'une prise pour générer des statistiques
         Prise prise = new Prise();
         prise.setTaille((byte) 15);
         prise.setPoids(2.8);
@@ -135,7 +137,8 @@ public class ApiGestionDePecheTests {
         prise.setSortie(sortie);
         prise.setPoisson(poisson);
         priseRepository.save(prise);
-    
+
+        // Test des statistiques du leurre
         mockMvc.perform(get("/statistique/leurre")
                 .param("year", "2024"))
                 .andExpect(status().isOk())
@@ -143,5 +146,4 @@ public class ApiGestionDePecheTests {
                 .andExpect(jsonPath("$[0].nomLeurre", is("Leurre1")))
                 .andExpect(jsonPath("$[0].nombreDePrises", is(1)));
     }
-    
 }

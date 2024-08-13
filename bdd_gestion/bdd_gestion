@@ -1,0 +1,55 @@
+CREATE DATABASE `bdd_gestion` ;
+
+USE bdd_gestion;
+
+CREATE TABLE poisson(
+   id_poisson INT AUTO_INCREMENT,
+   nom VARCHAR(50) ,
+   PRIMARY KEY(id_poisson)
+);
+
+CREATE TABLE utilisateur(
+   id_utilisateur INT AUTO_INCREMENT,
+   nom VARCHAR(50) ,
+   prenom VARCHAR(50) ,
+   identifiant VARCHAR(50) ,
+   motDePasse VARCHAR(50) ,
+   PRIMARY KEY(id_utilisateur),
+   UNIQUE(identifiant)
+);
+
+CREATE TABLE leurre(
+   id_leurre INT AUTO_INCREMENT,
+   nom VARCHAR(50) ,
+   taille TINYINT,
+   coloris VARCHAR(50) ,
+   grammage VARCHAR(50) ,
+   type VARCHAR(50) ,
+   PRIMARY KEY(id_leurre)
+);
+
+CREATE TABLE sortie(
+   id_sortie INT AUTO_INCREMENT,
+   dateHeure DATETIME NOT NULL,
+   spot VARCHAR(100) ,
+   meteo VARCHAR(50) ,
+   maree BOOLEAN,
+   commentaire VARCHAR(255) ,
+   id_utilisateur INT NOT NULL,
+   PRIMARY KEY(id_sortie),
+   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur)
+);
+
+CREATE TABLE prise(
+   id_prise INT AUTO_INCREMENT,
+   taille TINYINT,
+   poids DECIMAL(6,3)  ,
+   remarque VARCHAR(255) ,
+   id_leurre INT NOT NULL,
+   id_sortie INT NOT NULL,
+   id_poisson INT NOT NULL,
+   PRIMARY KEY(id_prise),
+   FOREIGN KEY(id_leurre) REFERENCES leurre(id_leurre),
+   FOREIGN KEY(id_sortie) REFERENCES sortie(id_sortie),
+   FOREIGN KEY(id_poisson) REFERENCES poisson(id_poisson)
+);
