@@ -70,15 +70,15 @@ public class ApiGestionDePecheTests {
 
         sortie = new Sortie();
         sortie.setDateHeure(LocalDateTime.of(2024, 5, 20, 14, 30));
-        sortie.setSpot("Rivière");
-        sortie.setMeteo("Ensoleillé");
-        sortie.setMaree(false);
-        sortie.setCommentaire("Bonne journée");
+        sortie.setSpot("Océan Atlantique");
+        sortie.setMeteo("Ensoleillé avec brise marine");
+        sortie.setMaree(true);
+        sortie.setCommentaire("Sortie en mer agréable");
         sortie.setUtilisateur(utilisateur);
         sortie = sortieRepository.save(sortie);
 
         poisson = new Poisson();
-        poisson.setNom("Truite");
+        poisson.setNom("Bar");
         poisson = poissonRepository.save(poisson);
     }
 
@@ -108,12 +108,12 @@ public class ApiGestionDePecheTests {
 
     @Test
     public void testCreationSortie() throws Exception {
-        // Test de création d'une sortie
+        // Test de création d'une sortie en mer
         mockMvc.perform(post("/sortie/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"dateHeure\": \"2024-05-21T10:00:00\", \"spot\": \"Lac\", \"meteo\": \"Nuageux\", \"maree\": false, \"commentaire\": \"Belle sortie\", \"utilisateur\": {\"idUtilisateur\": " + utilisateur.getIdUtilisateur() + "}}"))
+                .content("{\"dateHeure\": \"2024-05-21T10:00:00\", \"spot\": \"Golfe de Gascogne\", \"meteo\": \"Nuageux avec houle légère\", \"maree\": true, \"commentaire\": \"Sortie en mer réussie\", \"utilisateur\": {\"idUtilisateur\": " + utilisateur.getIdUtilisateur() + "}}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.spot", is("Lac")));
+                .andExpect(jsonPath("$.spot", is("Golfe de Gascogne")));
     }
 
     @Test
@@ -126,19 +126,20 @@ public class ApiGestionDePecheTests {
                 .andExpect(jsonPath("$.poids", is(2.8)));
     }
 
+
     @Test
     public void testLeurreStatistics() throws Exception {
         // Création d'une prise pour générer des statistiques
         Prise prise = new Prise();
-        prise.setTaille((byte) 15);
-        prise.setPoids(2.8);
-        prise.setRemarque("Très bon leurre");
+        prise.setTaille((byte) 50);
+        prise.setPoids(3.5);
+        prise.setRemarque("Belle prise, bon leurre");
         prise.setLeurre(leurre);
         prise.setSortie(sortie);
         prise.setPoisson(poisson);
         priseRepository.save(prise);
 
-        // Test des statistiques du leurre
+        // Test des statistiques du leurre en mer
         mockMvc.perform(get("/statistique/leurre")
                 .param("year", "2024"))
                 .andExpect(status().isOk())
