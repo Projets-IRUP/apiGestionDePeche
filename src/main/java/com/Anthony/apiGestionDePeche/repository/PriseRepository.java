@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface PriseRepository extends JpaRepository<Prise, Integer> {
 
-    @Query("SELECT p.leurre.nom, COUNT(p) as priseCount FROM Prise p WHERE YEAR(p.sortie.dateHeure) = :year GROUP BY p.leurre.nom, p.leurre.idLeurre ORDER BY priseCount DESC")
+    @Query("SELECT p.leurre.nom, COUNT(p) as priseCount FROM Prise p WHERE YEAR(p.sortie.dateHeure) = :year GROUP BY p.leurre.nom,"+
+    " p.leurre.idLeurre ORDER BY priseCount DESC")
     List<Object[]> findLeurreStatisticsForYear(@Param("year") int year);
 }

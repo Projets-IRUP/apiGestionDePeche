@@ -63,9 +63,26 @@ public class ApiGestionDePecheTests {
         utilisateur.setIdentifiant("jdupont");
         utilisateur.setMotDePasse("password");
         utilisateur = utilisateurRepository.save(utilisateur);
+        utilisateur = new Utilisateur();
+        utilisateur.setNom("Barriol");
+        utilisateur.setPrenom("Anthony");
+        utilisateur.setIdentifiant("abarriol");
+        utilisateur.setMotDePasse("password");
+        utilisateur = utilisateurRepository.save(utilisateur);
 
         leurre = new Leurre();
-        leurre.setNom("Leurre1");
+        leurre.setNom("Asturie");
+        leurre.setColoris("Bleu");
+        leurre.setGrammage(15);
+        leurre.setTaille(11);
+        leurre.setType("Surface");
+        leurre = leurreRepository.save(leurre);
+        leurre = new Leurre();
+        leurre.setNom("Black Minnow Off Shore");
+        leurre.setColoris("Kaki");
+        leurre.setGrammage(20);
+        leurre.setTaille(9);
+        leurre.setType("Souple");
         leurre = leurreRepository.save(leurre);
 
         sortie = new Sortie();
@@ -76,9 +93,21 @@ public class ApiGestionDePecheTests {
         sortie.setCommentaire("Sortie en mer agréable");
         sortie.setUtilisateur(utilisateur);
         sortie = sortieRepository.save(sortie);
+        sortie = new Sortie();
+        sortie.setDateHeure(LocalDateTime.of(2024, 5, 20, 17, 30));
+        sortie.setSpot("Océan Atlantique");
+        sortie.setMeteo("Tombée de la nuit");
+        sortie.setMaree(true);
+        sortie.setCommentaire("Froid ");
+        sortie.setUtilisateur(utilisateur);
+
+        sortie = sortieRepository.save(sortie);
 
         poisson = new Poisson();
         poisson.setNom("Bar");
+        poisson = poissonRepository.save(poisson);
+        poisson = new Poisson();
+        poisson.setNom("Maquerau");
         poisson = poissonRepository.save(poisson);
     }
 
@@ -144,7 +173,7 @@ public class ApiGestionDePecheTests {
                 .param("year", "2024"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].nomLeurre", is("Leurre1")))
+                .andExpect(jsonPath("$[0].nomLeurre", is("Black Minnow Off Shore")))
                 .andExpect(jsonPath("$[0].nombreDePrises", is(1)));
     }
 }
