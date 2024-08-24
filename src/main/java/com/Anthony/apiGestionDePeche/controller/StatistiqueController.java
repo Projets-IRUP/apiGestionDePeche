@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@RequestMapping("/statistique")
+
 @AllArgsConstructor
 public class StatistiqueController {
 
     private final StatistiqueService statistiqueService;
 
-    @GetMapping("/statistique/leurres")
+    @GetMapping("/leurre")
     public List<LeurreStatistiqueDTO> getLeurreStatistics(@RequestParam int year) {
         return statistiqueService.getLeurreStatisticsForYear(year);
     }
